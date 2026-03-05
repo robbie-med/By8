@@ -1,0 +1,13 @@
+{
+  "name": "RoundTrack",
+  "short_name": "RoundTrack",
+  "description": "Track hospital note completion times",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#060b14",
+  "theme_color": "#060b14",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
