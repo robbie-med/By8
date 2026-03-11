@@ -13,930 +13,663 @@
 <link rel="apple-touch-icon" href="icon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
-
 <style>
 :root {
-  --bg:        #060b14;
-  --surf:      #0d1626;
-  --surf2:     #131f35;
-  --border:    #1a2840;
-  --border2:   #243554;
-  --teal:      #00d4aa;
-  --teal-dim:  #009e80;
-  --teal-bg:   rgba(0,212,170,.12);
-  --amber:     #f0a500;
-  --red:       #e84545;
-  --text:      #d8e8f8;
-  --dim:       #5a7090;
-  --muted:     #2a3d58;
+  --bg:       #060b14;
+  --surf:     #0d1626;
+  --surf2:    #131f35;
+  --border:   #1a2840;
+  --border2:  #243554;
+  --teal:     #00d4aa;
+  --teal-dim: #009e80;
+  --teal-bg:  rgba(0,212,170,.12);
+  --amber:    #f0a500;
+  --red:      #e84545;
+  --red-bg:   rgba(232,69,69,.1);
+  --text:     #d8e8f8;
+  --dim:      #5a7090;
+  --muted:    #2a3d58;
   --sans: 'Outfit', sans-serif;
   --mono: 'DM Mono', monospace;
   --top: env(safe-area-inset-top, 0px);
   --bot: env(safe-area-inset-bottom, 0px);
 }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;height:100dvh;background:var(--bg);color:var(--text);font-family:var(--sans);overflow:hidden;-webkit-font-smoothing:antialiased}
+#app{display:flex;flex-direction:column;height:100%;height:100dvh;padding-top:var(--top);padding-bottom:var(--bot)}
+.screen{display:none;flex:1;flex-direction:column;overflow:hidden;animation:fadeIn .15s ease}
+.screen.active{display:flex}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+/* ── SETUP ── */
+#setup{justify-content:center;align-items:center;padding:20px;gap:clamp(14px,3.5vw,26px)}
+.logo{text-align:center}
+.logo-eyebrow{font-family:var(–mono);font-size:clamp(9px,2.5vw,11px);letter-spacing:5px;text-transform:uppercase;color:var(–teal);margin-bottom:2px}
+.logo-name{font-size:clamp(36px,12vw,56px);font-weight:900;letter-spacing:-2px;line-height:1;background:linear-gradient(140deg,#c8ddf5 20%,var(–teal) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.resume-banner{width:100%;max-width:380px;background:var(–teal-bg);border:1.5px solid var(–teal);border-radius:14px;padding:13px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:opacity .15s}
+.resume-banner:active{opacity:.75}
+.resume-dot{width:9px;height:9px;border-radius:50%;background:var(–teal);flex-shrink:0;animation:blink 1.5s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.resume-text{flex:1}
+.resume-label{font-size:clamp(10px,2.8vw,12px);font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(–teal)}
+.resume-sub{font-family:var(–mono);font-size:clamp(11px,3vw,13px);color:var(–dim);margin-top:1px}
+.resume-arrow{color:var(–teal);font-size:20px}
+.setup-label{font-size:clamp(9px,2.5vw,11px);font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(–dim);text-align:center}
+.count-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;width:100%;max-width:380px}
+.cnt-btn{background:var(–surf);border:1.5px solid var(–border);color:var(–text);font-family:var(–mono);font-size:clamp(16px,5vw,22px);font-weight:500;padding:clamp(11px,3.5vw,17px) 0;border-radius:12px;cursor:pointer;transition:background .12s,border-color .12s,color .12s,transform .1s;text-align:center;line-height:1}
+.cnt-btn:active{transform:scale(.94)}
+.cnt-btn.sel{background:var(–teal-bg);border-color:var(–teal);color:var(–teal)}
+.custom-row{display:flex;align-items:center;gap:10px;width:100%;max-width:380px}
+.custom-row label{font-family:var(–mono);font-size:clamp(9px,2.5vw,11px);letter-spacing:2px;text-transform:uppercase;color:var(–dim);white-space:nowrap}
+.custom-row input{flex:1;background:var(–surf);border:1.5px solid var(–border);color:var(–text);font-family:var(–mono);font-size:clamp(16px,5vw,20px);font-weight:500;padding:11px;border-radius:10px;text-align:center;outline:none;-webkit-appearance:none;-webkit-text-fill-color:var(–text)}
+.custom-row input:focus{border-color:var(–teal)}
+.start-btn{width:100%;max-width:380px;background:var(–teal);color:#060b14;border:none;font-family:var(–sans);font-size:clamp(14px,4.5vw,17px);font-weight:800;letter-spacing:.5px;padding:clamp(14px,4vw,18px);border-radius:14px;cursor:pointer;transition:opacity .1s,transform .1s}
+.start-btn:active{transform:scale(.97);opacity:.88}
+.setup-footer{display:flex;gap:24px;align-items:center}
+.text-link{font-family:var(–mono);font-size:clamp(10px,3vw,12px);color:var(–dim);cursor:pointer;letter-spacing:.5px;padding:6px 2px;border-bottom:1px solid transparent;transition:color .15s,border-color .15s}
+.text-link:active{color:var(–teal);border-color:var(–teal)}
 
-html, body {
-  height: 100%; height: 100dvh;
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--sans);
-  overflow: hidden;
-  -webkit-font-smoothing: antialiased;
-}
+/* ── SESSION ── */
+#session{overflow:hidden}
+.sess-header{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:6px;padding:clamp(10px,3vw,14px) clamp(12px,4vw,18px);border-bottom:1px solid var(–border);flex-shrink:0}
+.hdr-block{display:flex;flex-direction:column}
+.hdr-block.right{align-items:flex-end}
+.hdr-label{font-family:var(–mono);font-size:clamp(7px,2vw,9px);font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(–muted);margin-bottom:1px}
+.hdr-val{font-family:var(–mono);font-size:clamp(17px,5.5vw,24px);font-weight:500;color:var(–teal);line-height:1;transition:color .4s}
+.hdr-val.warn{color:var(–amber)}
+.hdr-val.danger{color:var(–red);animation:throb .8s ease-in-out infinite}
+.hdr-val.late{color:var(–dim);font-size:clamp(12px,3.5vw,16px)}
+@keyframes throb{0%,100%{opacity:1}50%{opacity:.6}}
+.hdr-center{text-align:center}
+.hdr-fraction{font-family:var(–mono);font-size:clamp(26px,8vw,36px);font-weight:500;line-height:1}
+.hdr-fraction .done{color:var(–teal)}
+.hdr-fraction .sep{color:var(–muted)}
+.hdr-fraction .total{color:var(–dim)}
+.hdr-center-label{font-family:var(–mono);font-size:clamp(7px,2vw,9px);letter-spacing:2px;text-transform:uppercase;color:var(–muted)}
+.progress-strip{height:3px;background:var(–border);flex-shrink:0}
+.progress-fill{height:100%;background:var(–teal);transition:width .4s ease}
+.del-banner{display:none;background:var(–red-bg);border-bottom:1px solid rgba(232,69,69,.3);padding:9px 16px;text-align:center;flex-shrink:0;font-family:var(–mono);font-size:clamp(9px,2.5vw,11px);color:var(–red);letter-spacing:1px;cursor:pointer}
+.del-banner.on{display:block}
+.patients-wrap{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:clamp(8px,2.5vw,14px)}
+.patient-grid{display:grid;gap:clamp(6px,2vw,10px)}
 
-#app {
-  display: flex; flex-direction: column;
-  height: 100%; height: 100dvh;
-  padding-top: var(--top);
-  padding-bottom: var(--bot);
-}
+/* Patient card */
+.pt-card{display:flex;align-items:center;gap:clamp(10px,3vw,14px);background:var(–surf);border:1.5px solid var(–border);border-radius:14px;padding:clamp(12px,3.5vw,16px) clamp(14px,4vw,18px);cursor:pointer;min-height:clamp(60px,17vw,76px);position:relative;overflow:hidden;-webkit-user-select:none;user-select:none;transition:border-color .18s,background .18s,transform .1s}
+.pt-card::after{content:’’;position:absolute;inset:0;background:var(–teal-bg);opacity:0;transition:opacity .18s;border-radius:13px;pointer-events:none}
+.pt-card.active{border-color:var(–teal)}
+.pt-card.active::after{opacity:1}
+.pt-card.done{border-color:rgba(0,212,170,.25);opacity:.75}
+.pt-card:active{transform:scale(.98)}
+.pt-card.delmode{border-color:var(–red)}
+.pt-card.delmode::after{background:var(–red-bg);opacity:1}
+.pt-del{display:none;position:absolute;top:8px;right:10px;width:28px;height:28px;border-radius:50%;background:var(–red);border:none;color:#fff;font-size:16px;line-height:1;cursor:pointer;align-items:center;justify-content:center;z-index:10;flex-shrink:0;transition:transform .1s}
+.pt-card.delmode .pt-del{display:flex}
+.pt-del:active{transform:scale(.88)}
+.pt-icon{width:clamp(30px,9vw,38px);height:clamp(30px,9vw,38px);border-radius:50%;border:2px solid var(–border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:border-color .18s,background .18s;z-index:1}
+.pt-card.active .pt-icon{border-color:var(–teal);background:var(–teal-bg);animation:pulse 1.6s ease-in-out infinite}
+.pt-card.done .pt-icon{border-color:var(–teal-dim);background:rgba(0,158,128,.18)}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,212,170,.5)}60%{box-shadow:0 0 0 8px rgba(0,212,170,0)}}
+.pt-icon svg{width:clamp(13px,4vw,17px);height:clamp(13px,4vw,17px);display:block}
+.pt-body{flex:1;z-index:1;min-width:0}
+.pt-action{font-family:var(–mono);font-size:clamp(8px,2.2vw,10px);font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(–muted);transition:color .18s}
+.pt-card.active .pt-action{color:var(–teal)}
+.pt-card.done .pt-action{color:var(–dim)}
+.pt-time{font-family:var(–mono);font-size:clamp(20px,6vw,26px);font-weight:500;color:var(–text);line-height:1.2;margin-top:1px;transition:color .18s}
+.pt-card.active .pt-time{color:var(–teal)}
+.pt-card.done .pt-time{color:var(–teal-dim)}
+.pt-segs{font-family:var(–mono);font-size:clamp(8px,2.2vw,10px);color:var(–dim);margin-top:2px}
+.pt-num{font-family:var(–mono);font-size:clamp(9px,2.5vw,11px);color:var(–muted);letter-spacing:1px;z-index:1}
+.pt-card.active .pt-num{color:var(–teal)}
+.sess-footer{display:flex;gap:6px;padding:clamp(7px,2vw,10px) clamp(10px,3vw,14px) clamp(9px,2.5vw,12px);border-top:1px solid var(–border);flex-shrink:0}
+.foot-tile{flex:1;background:var(–surf);border-radius:10px;padding:clamp(7px,2vw,9px) 6px;text-align:center}
+.foot-tile.tap{cursor:pointer}
+.foot-tile.tap:active{background:var(–surf2)}
+.foot-lbl{font-family:var(–mono);font-size:clamp(7px,1.8vw,8px);letter-spacing:2px;text-transform:uppercase;color:var(–muted)}
+.foot-val{font-family:var(–mono);font-size:clamp(12px,3.5vw,15px);font-weight:500;color:var(–text);margin-top:2px}
 
-.screen { display: none; flex: 1; flex-direction: column; overflow: hidden; animation: fadeIn .15s ease; }
-.screen.active { display: flex; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-
-/* ── SETUP ─────────────────────────────────────── */
-#setup {
-  justify-content: center; align-items: center;
-  padding: 28px 24px; gap: 28px;
-}
-
-.logo { text-align: center; }
-.logo-eyebrow {
-  font-family: var(--mono); font-size: 10px; font-weight: 500;
-  letter-spacing: 5px; text-transform: uppercase; color: var(--teal);
-  margin-bottom: 2px;
-}
-.logo-name {
-  font-size: 52px; font-weight: 900; letter-spacing: -2px; line-height: 1;
-  background: linear-gradient(140deg, #c8ddf5 20%, var(--teal) 100%);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-}
-
-.resume-banner {
-  width: 100%; max-width: 360px;
-  background: var(--teal-bg); border: 1.5px solid var(--teal);
-  border-radius: 14px; padding: 14px 18px;
-  display: flex; align-items: center; gap: 12px;
-  cursor: pointer; transition: opacity .15s;
-}
-.resume-banner:active { opacity: .75; }
-.resume-dot {
-  width: 10px; height: 10px; border-radius: 50%; background: var(--teal);
-  flex-shrink: 0; animation: blink 1.5s ease-in-out infinite;
-}
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
-.resume-text { flex: 1; }
-.resume-label { font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--teal); }
-.resume-sub { font-family: var(--mono); font-size: 13px; color: var(--dim); margin-top: 1px; }
-.resume-arrow { color: var(--teal); font-size: 20px; }
-
-.setup-label {
-  font-size: 11px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase;
-  color: var(--dim); text-align: center;
-}
-
-.count-grid {
-  display: grid; grid-template-columns: repeat(4, 1fr);
-  gap: 10px; width: 100%; max-width: 360px;
-}
-.cnt-btn {
-  background: var(--surf); border: 1.5px solid var(--border);
-  color: var(--text); font-family: var(--mono); font-size: 22px; font-weight: 500;
-  padding: 17px 0; border-radius: 12px; cursor: pointer;
-  transition: background .12s, border-color .12s, color .12s, transform .1s;
-  text-align: center; line-height: 1;
-}
-.cnt-btn:active { transform: scale(.94); }
-.cnt-btn.sel { background: var(--teal-bg); border-color: var(--teal); color: var(--teal); }
-
-.custom-row {
-  display: flex; align-items: center; gap: 10px;
-  width: 100%; max-width: 360px;
-}
-.custom-row label {
-  font-family: var(--mono); font-size: 11px; letter-spacing: 2px;
-  text-transform: uppercase; color: var(--dim); white-space: nowrap;
-}
-.custom-row input {
-  flex: 1; background: var(--surf); border: 1.5px solid var(--border);
-  color: var(--text); font-family: var(--mono); font-size: 20px; font-weight: 500;
-  padding: 12px; border-radius: 10px; text-align: center; outline: none;
-  -webkit-appearance: none; -webkit-text-fill-color: var(--text);
-}
-.custom-row input:focus { border-color: var(--teal); }
-
-.start-btn {
-  width: 100%; max-width: 360px;
-  background: var(--teal); color: #060b14;
-  border: none; font-family: var(--sans); font-size: 17px; font-weight: 800;
-  letter-spacing: .5px; padding: 18px; border-radius: 14px; cursor: pointer;
-  transition: opacity .1s, transform .1s;
-}
-.start-btn:active { transform: scale(.97); opacity: .88; }
-
-.setup-footer {
-  display: flex; gap: 24px; align-items: center;
-}
-.text-link {
-  font-family: var(--mono); font-size: 12px; color: var(--dim);
-  cursor: pointer; letter-spacing: .5px; padding: 6px 2px;
-  border-bottom: 1px solid transparent; transition: color .15s, border-color .15s;
-}
-.text-link:active { color: var(--teal); border-color: var(--teal); }
-
-/* ── SESSION ────────────────────────────────────── */
-#session { overflow: hidden; }
-
-.sess-header {
-  display: grid; grid-template-columns: 1fr auto 1fr;
-  align-items: center; gap: 6px;
-  padding: 14px 18px 12px; border-bottom: 1px solid var(--border);
-  flex-shrink: 0;
-}
-
-.hdr-block { display: flex; flex-direction: column; }
-.hdr-block.right { align-items: flex-end; }
-
-.hdr-label {
-  font-family: var(--mono); font-size: 9px; font-weight: 500;
-  letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 1px;
-}
-.hdr-val {
-  font-family: var(--mono); font-size: 22px; font-weight: 500;
-  color: var(--teal); line-height: 1; transition: color .4s;
-}
-.hdr-val.warn { color: var(--amber); }
-.hdr-val.danger { color: var(--red); animation: throb .8s ease-in-out infinite; }
-.hdr-val.late { color: var(--dim); font-size: 15px; }
-@keyframes throb { 0%,100%{opacity:1}50%{opacity:.6} }
-
-.hdr-center { text-align: center; }
-.hdr-fraction {
-  font-family: var(--mono); font-size: 32px; font-weight: 500; line-height: 1;
-}
-.hdr-fraction .done { color: var(--teal); }
-.hdr-fraction .sep { color: var(--muted); }
-.hdr-fraction .total { color: var(--dim); }
-.hdr-center-label {
-  font-family: var(--mono); font-size: 9px; letter-spacing: 2px;
-  text-transform: uppercase; color: var(--muted);
-}
-
-/* Progress strip */
-.progress-strip { height: 3px; background: var(--border); flex-shrink: 0; }
-.progress-fill { height: 100%; background: var(--teal); transition: width .4s ease; }
-
-/* Patient grid */
-.patients-wrap {
-  flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
-  padding: 14px;
-}
-.patient-grid { display: grid; gap: 10px; }
-
-.pt-card {
-  display: flex; align-items: center; gap: 14px;
-  background: var(--surf); border: 1.5px solid var(--border);
-  border-radius: 14px; padding: 16px 18px;
-  cursor: pointer; transition: border-color .18s, background .18s;
-  min-height: 74px; position: relative; overflow: hidden;
-  -webkit-user-select: none; user-select: none;
-}
-.pt-card::after {
-  content: ''; position: absolute; inset: 0;
-  background: var(--teal-bg); opacity: 0; transition: opacity .18s; border-radius: 13px;
-}
-.pt-card.active { border-color: var(--teal); }
-.pt-card.active::after { opacity: 1; }
-.pt-card.done { border-color: rgba(0,212,170,.25); opacity: .72; }
-
-/* Tap ripple */
-.pt-card:active { transform: scale(.98); }
-
-.pt-icon {
-  width: 38px; height: 38px; border-radius: 50%;
-  border: 2px solid var(--border2); display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0; transition: border-color .18s, background .18s; z-index: 1;
-}
-.pt-card.active .pt-icon {
-  border-color: var(--teal); background: var(--teal-bg);
-  animation: pulse 1.6s ease-in-out infinite;
-}
-.pt-card.done .pt-icon { border-color: var(--teal-dim); background: rgba(0,158,128,.18); }
-@keyframes pulse {
-  0%,100%{box-shadow:0 0 0 0 rgba(0,212,170,.5)}
-  60%{box-shadow:0 0 0 8px rgba(0,212,170,0)}
-}
-
-.pt-icon svg { width: 17px; height: 17px; display: block; }
-
-.pt-body { flex: 1; z-index: 1; min-width: 0; }
-.pt-action {
-  font-family: var(--mono); font-size: 10px; font-weight: 500;
-  letter-spacing: 2px; text-transform: uppercase;
-  color: var(--muted); transition: color .18s;
-}
-.pt-card.active .pt-action { color: var(--teal); }
-.pt-card.done .pt-action { color: var(--dim); }
-.pt-time {
-  font-family: var(--mono); font-size: 24px; font-weight: 500;
-  color: var(--text); line-height: 1.2; margin-top: 1px; transition: color .18s;
-}
-.pt-card.active .pt-time { color: var(--teal); }
-.pt-card.done .pt-time { color: var(--teal-dim); }
-
-.pt-num {
-  font-family: var(--mono); font-size: 11px; color: var(--muted);
-  letter-spacing: 1px; z-index: 1;
-}
-.pt-card.active .pt-num { color: var(--teal); }
-
-/* Session footer */
-.sess-footer {
-  display: flex; gap: 8px; padding: 10px 14px 12px;
-  border-top: 1px solid var(--border); flex-shrink: 0;
-}
-.foot-tile {
-  flex: 1; background: var(--surf); border-radius: 10px;
-  padding: 9px 10px; text-align: center;
-}
-.foot-tile.tap { cursor: pointer; }
-.foot-tile.tap:active { background: var(--surf2); }
-.foot-lbl { font-family: var(--mono); font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
-.foot-val { font-family: var(--mono); font-size: 15px; font-weight: 500; color: var(--text); margin-top: 2px; }
-
-/* ── STATS ──────────────────────────────────────── */
-#stats { overflow: hidden; }
-
-.stats-hdr {
-  display: flex; align-items: center; gap: 14px;
-  padding: 14px 18px; border-bottom: 1px solid var(--border); flex-shrink: 0;
-}
-.back-btn {
-  width: 36px; height: 36px; border-radius: 50%;
-  background: var(--surf); border: 1.5px solid var(--border);
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; flex-shrink: 0; color: var(--text);
-  transition: border-color .15s, color .15s;
-}
-.back-btn:active { border-color: var(--teal); color: var(--teal); }
-.stats-title { font-size: 22px; font-weight: 800; letter-spacing: -.5px; }
-
-.stats-body {
-  flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
-  padding: 16px 14px; display: flex; flex-direction: column; gap: 14px;
-}
-
-.sec-label {
-  font-family: var(--mono); font-size: 9px; letter-spacing: 3px;
-  text-transform: uppercase; color: var(--dim); margin-bottom: -6px;
-}
-
-.stat-card {
-  background: var(--surf); border: 1.5px solid var(--border); border-radius: 14px;
-  overflow: hidden;
-}
-
-.stat-grid {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 1px; background: var(--border);
-}
-.stat-cell {
-  background: var(--surf); padding: 16px 14px; text-align: center;
-}
-.stat-cell.span2 { grid-column: span 2; }
-.cell-lbl { font-family: var(--mono); font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
-.cell-val { font-family: var(--mono); font-size: 26px; font-weight: 500; color: var(--text); line-height: 1; }
-.cell-val.accent { color: var(--teal); }
-.cell-val.sm { font-size: 20px; }
-.cell-sub { font-family: var(--mono); font-size: 10px; color: var(--dim); margin-top: 3px; }
-
-.pbar-wrap { height: 4px; background: var(--border); }
-.pbar-fill { height: 100%; background: var(--teal); transition: width .5s ease; }
-
-.hist-list { display: flex; flex-direction: column; }
-.hist-row {
-  display: flex; align-items: center; gap: 10px;
-  padding: 12px 16px; border-bottom: 1px solid var(--border);
-}
-.hist-row:last-child { border-bottom: none; }
-.hist-date { font-family: var(--mono); font-size: 11px; color: var(--dim); min-width: 90px; }
-.hist-pts { font-family: var(--mono); font-size: 18px; font-weight: 500; color: var(--text); min-width: 44px; }
-.hist-pts span { font-size: 11px; color: var(--muted); }
-.hist-avg { font-family: var(--mono); font-size: 12px; color: var(--dim); flex: 1; text-align: right; }
-.hist-badge {
-  font-family: var(--mono); font-size: 9px; letter-spacing: 1px; font-weight: 500;
-  padding: 3px 8px; border-radius: 20px;
-  background: rgba(0,212,170,.12); color: var(--teal);
-}
-.hist-badge.late { background: rgba(232,69,69,.12); color: var(--red); }
-
-.empty-msg {
-  text-align: center; color: var(--muted); font-family: var(--mono);
-  font-size: 13px; padding: 40px 20px; letter-spacing: .5px; line-height: 2;
-}
-
-.danger-zone {
-  text-align: center; padding: 8px 0 4px;
-  font-family: var(--mono); font-size: 11px; color: var(--muted);
-  cursor: pointer; letter-spacing: 1px;
-  border-top: 1px solid var(--border); margin-top: 4px; padding-top: 16px;
-}
-.danger-zone:active { color: var(--red); }
-
-/* Scrollbars */
-::-webkit-scrollbar { width: 3px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+/* ── STATS ── */
+#stats{overflow:hidden}
+.stats-hdr{display:flex;align-items:center;gap:10px;padding:clamp(10px,3vw,14px) clamp(12px,4vw,18px);border-bottom:1px solid var(–border);flex-shrink:0}
+.back-btn{width:36px;height:36px;border-radius:50%;background:var(–surf);border:1.5px solid var(–border);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;color:var(–text);transition:border-color .15s,color .15s}
+.back-btn:active{border-color:var(–teal);color:var(–teal)}
+.stats-title{font-size:clamp(18px,5.5vw,24px);font-weight:800;letter-spacing:-.5px;flex:1}
+.stats-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:clamp(10px,3vw,16px) clamp(10px,3vw,14px);display:flex;flex-direction:column;gap:clamp(10px,3vw,14px)}
+.sec-label{font-family:var(–mono);font-size:clamp(8px,2.2vw,9px);letter-spacing:3px;text-transform:uppercase;color:var(–dim);margin-bottom:-4px}
+.stat-card{background:var(–surf);border:1.5px solid var(–border);border-radius:14px;overflow:hidden}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(–border)}
+.stat-cell{background:var(–surf);padding:clamp(12px,3.5vw,16px) clamp(10px,3vw,14px);text-align:center}
+.stat-cell.span2{grid-column:span 2}
+.cell-lbl{font-family:var(–mono);font-size:clamp(7px,2vw,9px);letter-spacing:2px;text-transform:uppercase;color:var(–muted);margin-bottom:4px}
+.cell-val{font-family:var(–mono);font-size:clamp(20px,6.5vw,28px);font-weight:500;color:var(–text);line-height:1}
+.cell-val.accent{color:var(–teal)}
+.cell-val.sm{font-size:clamp(16px,5vw,22px)}
+.cell-sub{font-family:var(–mono);font-size:clamp(8px,2.2vw,10px);color:var(–dim);margin-top:3px}
+.pbar-wrap{height:4px;background:var(–border)}
+.pbar-fill{height:100%;background:var(–teal);transition:width .5s ease}
+.hist-list{display:flex;flex-direction:column}
+.hist-row{display:flex;align-items:center;gap:8px;padding:clamp(10px,3vw,12px) clamp(12px,3.5vw,16px);border-bottom:1px solid var(–border)}
+.hist-row:last-child{border-bottom:none}
+.hist-date{font-family:var(–mono);font-size:clamp(9px,2.5vw,11px);color:var(–dim);min-width:clamp(68px,20vw,92px)}
+.hist-pts{font-family:var(–mono);font-size:clamp(15px,4.5vw,19px);font-weight:500;color:var(–text);min-width:clamp(34px,9vw,44px)}
+.hist-pts span{font-size:clamp(9px,2.5vw,11px);color:var(–muted)}
+.hist-avg{font-family:var(–mono);font-size:clamp(10px,3vw,12px);color:var(–dim);flex:1;text-align:right;margin-right:4px}
+.hist-badge{font-family:var(–mono);font-size:clamp(7px,2vw,9px);letter-spacing:1px;font-weight:500;padding:3px 7px;border-radius:20px;background:rgba(0,212,170,.12);color:var(–teal);flex-shrink:0}
+.hist-badge.late{background:rgba(232,69,69,.12);color:var(–red)}
+.hist-del{width:26px;height:26px;border-radius:50%;flex-shrink:0;background:transparent;border:1.5px solid var(–muted);color:var(–muted);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s,border-color .15s,color .15s}
+.hist-del:active{background:var(–red-bg);border-color:var(–red);color:var(–red)}
+.empty-msg{text-align:center;color:var(–muted);font-family:var(–mono);font-size:clamp(11px,3vw,13px);padding:40px 20px;letter-spacing:.5px;line-height:2}
+.data-row{display:flex;gap:8px;padding:clamp(10px,3vw,14px) 0 2px;border-top:1px solid var(–border);margin-top:2px}
+.data-btn{flex:1;padding:11px 4px;border-radius:10px;background:var(–surf);border:1.5px solid var(–border);color:var(–text);font-family:var(–mono);font-size:clamp(9px,2.5vw,11px);letter-spacing:1px;text-transform:uppercase;cursor:pointer;text-align:center;transition:border-color .15s,color .15s;position:relative;overflow:hidden}
+.data-btn:active{border-color:var(–teal);color:var(–teal)}
+.data-btn.danger:active{border-color:var(–red);color:var(–red)}
+.data-btn input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;font-size:0}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(–border2);border-radius:2px}
 </style>
 
 </head>
 <body>
 <div id="app">
 
-  <!-- ── SETUP ── -->
+<!-- SETUP -->
 
-  <div id="setup" class="screen">
-    <div class="logo">
-      <div class="logo-eyebrow">Hospital Notes</div>
-      <div class="logo-name">RoundTrack</div>
+<div id="setup" class="screen">
+  <div class="logo">
+    <div class="logo-eyebrow">Hospital Notes</div>
+    <div class="logo-name">RoundTrack</div>
+  </div>
+  <div id="resume-banner" class="resume-banner" style="display:none">
+    <div class="resume-dot"></div>
+    <div class="resume-text">
+      <div class="resume-label">Resume Today's Session</div>
+      <div class="resume-sub" id="resume-sub"></div>
     </div>
-
-```
-<div id="resume-banner" class="resume-banner" style="display:none">
-  <div class="resume-dot"></div>
-  <div class="resume-text">
-    <div class="resume-label">Resume Today's Session</div>
-    <div class="resume-sub" id="resume-sub">— patients in progress</div>
+    <div class="resume-arrow">›</div>
   </div>
-  <div class="resume-arrow">›</div>
-</div>
-
-<div class="setup-label">Patients today</div>
-
-<div class="count-grid" id="count-grid"></div>
-
-<div class="custom-row">
-  <label>Other</label>
-  <input type="number" id="custom-input" min="1" max="60" placeholder="—" inputmode="numeric">
-</div>
-
-<button class="start-btn" id="start-btn">Start Session →</button>
-
-<div class="setup-footer">
-  <div class="text-link" id="stats-link">Statistics</div>
-</div>
-```
-
+  <div class="setup-label">Patients today</div>
+  <div class="count-grid" id="count-grid"></div>
+  <div class="custom-row">
+    <label>Other</label>
+    <input type="number" id="custom-input" min="1" max="60" placeholder="—" inputmode="numeric">
   </div>
+  <button class="start-btn" id="start-btn">Start Session →</button>
+  <div class="setup-footer">
+    <div class="text-link" id="stats-link">Statistics</div>
+  </div>
+</div>
 
-  <!-- ── SESSION ── -->
+<!-- SESSION -->
 
-  <div id="session" class="screen">
-    <div class="sess-header">
-      <div class="hdr-block">
-        <div class="hdr-label">Until 08:00</div>
-        <div class="hdr-val" id="hdr-deadline">--:--</div>
-      </div>
-      <div class="hdr-block hdr-center">
-        <div class="hdr-fraction">
-          <span class="done" id="hdr-done">0</span><span class="sep">/</span><span class="total" id="hdr-total">0</span>
-        </div>
-        <div class="hdr-center-label">patients done</div>
-      </div>
-      <div class="hdr-block right">
-        <div class="hdr-label" style="text-align:right">avg / note</div>
-        <div class="hdr-val" id="hdr-avg" style="color:var(--text)">—</div>
-      </div>
+<div id="session" class="screen">
+  <div class="sess-header">
+    <div class="hdr-block">
+      <div class="hdr-label">Until 08:00</div>
+      <div class="hdr-val" id="hdr-deadline">--:--</div>
     </div>
-
-```
-<div class="progress-strip">
-  <div class="progress-fill" id="progress-fill" style="width:0%"></div>
-</div>
-
-<div class="patients-wrap">
-  <div class="patient-grid" id="patient-grid"></div>
-</div>
-
-<div class="sess-footer">
-  <div class="foot-tile">
-    <div class="foot-lbl">Fastest</div>
-    <div class="foot-val" id="foot-fast">—</div>
-  </div>
-  <div class="foot-tile">
-    <div class="foot-lbl">Slowest</div>
-    <div class="foot-val" id="foot-slow">—</div>
-  </div>
-  <div class="foot-tile">
-    <div class="foot-lbl">Est. Done</div>
-    <div class="foot-val" id="foot-est">—</div>
-  </div>
-  <div class="foot-tile tap" id="sess-menu-btn">
-    <div class="foot-lbl">More</div>
-    <div class="foot-val">⋯</div>
-  </div>
-</div>
-```
-
-  </div>
-
-  <!-- ── STATS ── -->
-
-  <div id="stats" class="screen">
-    <div class="stats-hdr">
-      <div class="back-btn" id="back-btn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16">
-          <path d="M15 18l-6-6 6-6"/>
-        </svg>
+    <div class="hdr-block hdr-center">
+      <div class="hdr-fraction">
+        <span class="done" id="hdr-done">0</span><span class="sep">/</span><span class="total" id="hdr-total">0</span>
       </div>
-      <div class="stats-title">Statistics</div>
+      <div class="hdr-center-label">patients done</div>
     </div>
-    <div class="stats-body" id="stats-body"></div>
+    <div class="hdr-block right">
+      <div class="hdr-label" style="text-align:right">avg / note</div>
+      <div class="hdr-val" id="hdr-avg" style="color:var(--text)">—</div>
+    </div>
   </div>
-
+  <div class="progress-strip"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  <div id="del-banner" class="del-banner">LONG-PRESS TO SELECT  ·  Tap here to cancel delete mode</div>
+  <div class="patients-wrap">
+    <div class="patient-grid" id="patient-grid"></div>
+  </div>
+  <div class="sess-footer">
+    <div class="foot-tile"><div class="foot-lbl">Fastest</div><div class="foot-val" id="foot-fast">—</div></div>
+    <div class="foot-tile"><div class="foot-lbl">Slowest</div><div class="foot-val" id="foot-slow">—</div></div>
+    <div class="foot-tile"><div class="foot-lbl">Est. Done</div><div class="foot-val" id="foot-est">—</div></div>
+    <div class="foot-tile tap" id="sess-stats-btn"><div class="foot-lbl">Stats</div><div class="foot-val">↗</div></div>
+  </div>
 </div>
 
+<!-- STATS -->
+
+<div id="stats" class="screen">
+  <div class="stats-hdr">
+    <div class="back-btn" id="back-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><path d="M15 18l-6-6 6-6"/></svg>
+    </div>
+    <div class="stats-title">Statistics</div>
+  </div>
+  <div class="stats-body" id="stats-body"></div>
+</div>
+
+</div><!-- #app -->
 <script>
-// ═══════════════════════════════════════════
-//  ROUNDTRACK  –  Hospital Notes Tracker
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════════════
+//  ROUNDTRACK v2
+//
+//  TIMER MODEL — prevents "ghost time" bug:
+//
+//  Each patient tracks:
+//    duration  = accumulated ms from completed segments
+//    startTime = start of CURRENT active segment (null if not running)
+//    segments  = number of start/stop cycles
+//
+//  ptDuration(p)   = duration + (now - startTime)  [if active]
+//                  = duration                        [if done]
+//
+//  On STOP:  duration += now - startTime  →  startTime = null
+//  On RE-START: startTime = now  (duration unchanged — this is the fix!)
+// ═══════════════════════════════════════════════
 
-// ── Persistence ──────────────────────────────
-const STORE_KEY   = 'rt_data_v2';
-const SESSION_KEY = 'rt_session_v2';
+const SK = ‘rt_data_v3’, SSK = ‘rt_sess_v3’;
+const PRESETS = [6,8,10,12,14,16,18,20];
 
-function loadStore() {
-  try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch { return {}; }
-}
-function saveStore(obj) {
-  try { localStorage.setItem(STORE_KEY, JSON.stringify(obj)); } catch {}
-}
-function loadSavedSession() {
-  try {
-    const s = JSON.parse(localStorage.getItem(SESSION_KEY));
-    if (s && s.date === today()) return s;
-  } catch {}
-  return null;
-}
-function saveCurrentSession() {
-  if (S.session) {
-    try { localStorage.setItem(SESSION_KEY, JSON.stringify(S.session)); } catch {}
-  }
-}
-function clearCurrentSession() {
-  localStorage.removeItem(SESSION_KEY);
-}
+// ── Storage ───────────────────────────────────
+const load  = k => { try{return JSON.parse(localStorage.getItem(k))||null}catch{return null} };
+const save  = (k,v) => { try{localStorage.setItem(k,JSON.stringify(v))}catch{} };
 
-// ── State ─────────────────────────────────────
-const S = {
-  screen: 'setup',
-  session: null,
-  selectedCount: null,
-};
+let store = load(SK) || {};
+store.history  = store.history  || [];
+store.lastCount= store.lastCount|| null;
 
-let store = loadStore();         // { lastCount, history: [...] }
-store.history = store.history || [];
-store.lastCount = store.lastCount || null;
+const S = { screen:‘setup’, session:null, sel:null, delMode:false, statsFrom:‘setup’ };
 
 // ── Utils ─────────────────────────────────────
-function today() { return new Date().toISOString().slice(0, 10); }
+const today = () => new Date().toISOString().slice(0,10);
+
+function ptDur(p, now=Date.now()) {
+if (p.status===‘active’) return (p.dur||0)+(now-p.startTime);
+if (p.dur!=null)         return p.dur;
+if (p.endTime&&p.startTime) return p.endTime-p.startTime; // legacy
+return 0;
+}
 
 function fmtMs(ms) {
-  if (ms == null || ms < 0) ms = 0;
-  const s = Math.floor(ms / 1000);
-  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+if (!ms||ms<0) ms=0;
+const s=Math.floor(ms/1000);
+return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
 }
 
-function fmtMsShort(ms) {
-  const m = Math.floor(ms / 60000);
-  const s = Math.floor((ms % 60000) / 1000);
-  return m > 0 ? `${m}m${s ? s + 's' : ''}` : `${s}s`;
-}
-
-function msUntil0800() {
-  const now = new Date();
-  const dl  = new Date(); dl.setHours(8, 0, 0, 0);
-  return dl - now;            // negative = past deadline
+function msUntil08() {
+const n=new Date(), d=new Date(); d.setHours(8,0,0,0); return d-n;
 }
 
 function fmtCountdown(ms) {
-  const abs  = Math.abs(ms);
-  const secs = Math.floor(abs / 1000);
-  const mins = Math.floor(secs / 60);
-  const hrs  = Math.floor(mins / 60);
-  const ss   = String(secs % 60).padStart(2, '0');
-  const mm   = String(mins % 60).padStart(2, '0');
-  if (ms < 0) return hrs > 0 ? `+${hrs}h${mm}m` : `+${mins}m`;
-  return hrs > 0 ? `${hrs}:${mm}:${ss}` : `${mins}:${ss}`;
+const a=Math.abs(ms), s=Math.floor(a/1000), m=Math.floor(s/60), h=Math.floor(m/60);
+const SS=String(s%60).padStart(2,‘0’), MM=String(m%60).padStart(2,‘0’);
+if (ms<0) return h>0?`+${h}h${MM}m`:`+${m}m`;
+return h>0?`${h}:${MM}:${SS}`:`${m}:${SS}`;
 }
 
-function estimateDone() {
-  if (!S.session) return null;
-  const done = S.session.patients.filter(p => p.status === 'done');
-  const rem  = S.session.patients.filter(p => p.status !== 'done');
-  if (!done.length || !rem.length) return null;
-  const avg = done.reduce((s, p) => s + (p.endTime - p.startTime), 0) / done.length;
-  const eta = new Date(Date.now() + avg * rem.length);
-  return `${String(eta.getHours()).padStart(2,'0')}:${String(eta.getMinutes()).padStart(2,'0')}`;
+function estDone() {
+if (!S.session) return null;
+const done=S.session.pts.filter(p=>p.status===‘done’);
+const rem =S.session.pts.filter(p=>p.status!==‘done’);
+if (!done.length||!rem.length) return null;
+const avg=done.reduce((s,p)=>s+ptDur(p),0)/done.length;
+const eta=new Date(Date.now()+avg*rem.length);
+return `${String(eta.getHours()).padStart(2,'0')}:${String(eta.getMinutes()).padStart(2,'0')}`;
 }
 
-// ── Setup Screen ──────────────────────────────
-const PRESETS = [6, 8, 10, 12, 14, 16, 18, 20];
-
+// ── Setup ─────────────────────────────────────
 function initSetup() {
-  // Populate preset buttons
-  const grid = document.getElementById('count-grid');
-  grid.innerHTML = '';
-  PRESETS.forEach(n => {
-    const b = document.createElement('button');
-    b.className = 'cnt-btn' + (S.selectedCount === n ? ' sel' : '');
-    b.textContent = n;
-    b.addEventListener('click', () => { selectCount(n); document.getElementById('custom-input').value = ''; });
-    grid.appendChild(b);
-  });
-
-  // Custom input
-  const ci = document.getElementById('custom-input');
-  if (S.selectedCount && !PRESETS.includes(S.selectedCount)) ci.value = S.selectedCount;
-  else ci.value = '';
-
-  // Resume banner
-  const saved = loadSavedSession();
-  const rb = document.getElementById('resume-banner');
-  if (saved && saved.patients.some(p => p.status !== 'done')) {
-    const done = saved.patients.filter(p => p.status === 'done').length;
-    document.getElementById('resume-sub').textContent =
-      `${done}/${saved.patientCount} done · tap to continue`;
-    rb.style.display = 'flex';
-    rb.onclick = () => resumeSession(saved);
-  } else {
-    rb.style.display = 'none';
-  }
-}
-
-function selectCount(n) {
-  S.selectedCount = n;
-  document.querySelectorAll('.cnt-btn').forEach(b => b.classList.toggle('sel', +b.textContent === n));
-}
-
-document.getElementById('custom-input').addEventListener('input', e => {
-  const v = parseInt(e.target.value);
-  if (v > 0) {
-    S.selectedCount = v;
-    document.querySelectorAll('.cnt-btn').forEach(b => b.classList.remove('sel'));
-  }
+// Preset buttons
+const grid=document.getElementById(‘count-grid’);
+grid.innerHTML=’’;
+PRESETS.forEach(n=>{
+const b=document.createElement(‘button’);
+b.className=‘cnt-btn’+(S.sel===n?’ sel’:’’);
+b.textContent=n;
+b.onclick=()=>{ S.sel=n; document.getElementById(‘custom-input’).value=’’; initSetup(); };
+grid.appendChild(b);
 });
 
-document.getElementById('start-btn').addEventListener('click', () => {
-  const ci = parseInt(document.getElementById('custom-input').value);
-  if (ci > 0) S.selectedCount = ci;
-  if (!S.selectedCount) { selectCount(10); return; }
-  newSession(S.selectedCount);
+const ci=document.getElementById(‘custom-input’);
+if (S.sel&&!PRESETS.includes(S.sel)) ci.value=S.sel; else ci.value=’’;
+
+// Resume banner
+const saved=load(SSK);
+const rb=document.getElementById(‘resume-banner’);
+if (saved&&saved.date===today()&&saved.pts.some(p=>p.status!==‘done’)) {
+const dn=saved.pts.filter(p=>p.status===‘done’).length;
+document.getElementById(‘resume-sub’).textContent=`${dn}/${saved.pts.length} done · tap to continue`;
+rb.style.display=‘flex’;
+rb.onclick=()=>{ S.session=saved; showScreen(‘session’); };
+} else { rb.style.display=‘none’; }
+}
+
+document.getElementById(‘custom-input’).addEventListener(‘input’, e=>{
+const v=parseInt(e.target.value);
+if (v>0){ S.sel=v; document.querySelectorAll(’.cnt-btn’).forEach(b=>b.classList.remove(‘sel’)); }
 });
 
-document.getElementById('stats-link').addEventListener('click', () => showStats());
+document.getElementById(‘start-btn’).addEventListener(‘click’, ()=>{
+const ci=parseInt(document.getElementById(‘custom-input’).value);
+if (ci>0) S.sel=ci;
+if (!S.sel){ S.sel=10; initSetup(); return; }
+startSession(S.sel);
+});
 
-// ── Session ───────────────────────────────────
-function newSession(count) {
-  S.session = {
-    date: today(),
-    patientCount: count,
-    sessionStart: Date.now(),
-    patients: Array.from({ length: count }, (_, i) => ({
-      id: i + 1, status: 'ready', startTime: null, endTime: null,
-    })),
-  };
-  store.lastCount = count;
-  saveStore(store);
-  saveCurrentSession();
-  showScreen('session');
+document.getElementById(‘stats-link’).addEventListener(‘click’, ()=>{ S.statsFrom=‘setup’; showStats(); });
+
+// ── Session start ─────────────────────────────
+function startSession(n) {
+S.session={
+date:today(), count:n, started:Date.now(),
+pts: Array.from({length:n},(_,i)=>({id:i+1,status:‘ready’,startTime:null,dur:0,segs:0})),
+};
+S.delMode=false;
+store.lastCount=n; save(SK,store);
+save(SSK,S.session);
+showScreen(‘session’);
 }
 
-function resumeSession(saved) {
-  S.session = saved;
-  showScreen('session');
+// ── Tap a card — THE FIX IS HERE ──────────────
+function tapCard(id) {
+if (S.delMode) return;
+const p=S.session.pts.find(x=>x.id===id);
+if (!p) return;
+const now=Date.now();
+
+if (p.status===‘ready’) {
+// First tap: start fresh
+p.status=‘active’; p.startTime=now; p.dur=0; p.segs=1;
+
+} else if (p.status===‘active’) {
+// Second tap: STOP — fold current segment into dur
+p.dur += now - p.startTime;   // ← accumulate
+p.startTime=null;
+p.status=‘done’;
+
+} else {
+// Tap on done: RE-START — begin a new segment, dur stays
+p.status=‘active’;
+p.startTime=now;              // ← fresh segment start only
+p.segs=(p.segs||1)+1;
+// p.dur is UNTOUCHED — no ghost time!
 }
 
-// Render full patient grid
+save(SSK,S.session);
+const old=document.querySelector(`.pt-card[data-id="${id}"]`);
+if (old) old.replaceWith(makeCard(p));
+updateHdr();
+if (S.session.pts.every(x=>x.status===‘done’)) finalise();
+}
+
+// ── Delete mode ───────────────────────────────
+let lpTimer=null;
+function armLongPress(card, id) {
+const start=()=>{ lpTimer=setTimeout(()=>{ S.delMode=true; renderGrid(); },450); };
+const cancel=()=>{ clearTimeout(lpTimer); lpTimer=null; };
+card.addEventListener(‘touchstart’, start, {passive:true});
+card.addEventListener(‘touchend’,   cancel);
+card.addEventListener(‘touchmove’,  cancel, {passive:true});
+card.addEventListener(‘mousedown’,  start);
+card.addEventListener(‘mouseup’,    cancel);
+card.addEventListener(‘mouseleave’, cancel);
+}
+
+document.getElementById(‘del-banner’).addEventListener(‘click’, ()=>{
+S.delMode=false; renderGrid();
+document.getElementById(‘del-banner’).classList.remove(‘on’);
+});
+
+function delPatient(id) {
+S.session.pts=S.session.pts.filter(p=>p.id!==id);
+S.session.count=S.session.pts.length;
+if (!S.session.pts.length){ clearSess(); S.session=null; S.delMode=false; showScreen(‘setup’); return; }
+save(SSK,S.session);
+S.delMode=false;
+renderGrid();
+updateHdr();
+}
+
+function clearSess(){ localStorage.removeItem(SSK); }
+
+// ── Render ────────────────────────────────────
 function renderGrid() {
-  if (!S.session) return;
-  const grid = document.getElementById('patient-grid');
-  const n = S.session.patientCount;
-  grid.style.gridTemplateColumns = n <= 6 ? '1fr' : n <= 14 ? '1fr 1fr' : '1fr 1fr 1fr';
-  grid.innerHTML = '';
-  S.session.patients.forEach(p => grid.appendChild(makeCard(p)));
-  updateHeader();
+if (!S.session) return;
+const grid=document.getElementById(‘patient-grid’);
+const n=S.session.pts.length;
+grid.style.gridTemplateColumns=n<=6?‘1fr’:n<=14?‘1fr 1fr’:‘1fr 1fr 1fr’;
+grid.innerHTML=’’;
+S.session.pts.forEach(p=>grid.appendChild(makeCard(p)));
+document.getElementById(‘del-banner’).classList.toggle(‘on’, S.delMode);
+updateHdr();
 }
 
 function makeCard(p) {
-  const card = document.createElement('div');
-  card.className = `pt-card ${p.status}`;
-  card.dataset.id = p.id;
+const card=document.createElement(‘div’);
+card.className=`pt-card ${p.status}${S.delMode?' delmode':''}`;
+card.dataset.id=p.id;
 
-  // Icon SVG
-  let icon;
-  if (p.status === 'done') {
-    icon = `<svg viewBox="0 0 24 24" fill="none" stroke="var(--teal-dim)" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>`;
-  } else if (p.status === 'active') {
-    icon = `<svg viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3" fill="var(--teal)"/></svg>`;
-  } else {
-    icon = `<svg viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><circle cx="12" cy="12" r="8"/></svg>`;
-  }
+let ico;
+if      (p.status===‘done’)   ico=`<svg viewBox="0 0 24 24" fill="none" stroke="var(--teal-dim)" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>`;
+else if (p.status===‘active’) ico=`<svg viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3" fill="var(--teal)"/></svg>`;
+else                          ico=`<svg viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><circle cx="12" cy="12" r="8"/></svg>`;
 
-  const action = p.status === 'ready' ? 'TAP TO START' : p.status === 'active' ? 'RECORDING' : 'DONE — TAP TO UNDO';
-  let timeHTML = '';
-  if (p.status === 'active') {
-    const el = fmtMs(Date.now() - p.startTime);
-    timeHTML = `<div class="pt-time" data-live="${p.id}">${el}</div>`;
-  } else if (p.status === 'done') {
-    timeHTML = `<div class="pt-time">${fmtMs(p.endTime - p.startTime)}</div>`;
-  }
-
-  card.innerHTML = `
-    <div class="pt-icon">${icon}</div>
-    <div class="pt-body">
-      <div class="pt-action">${action}</div>
-      ${timeHTML}
-    </div>
-    <div class="pt-num">PT ${String(p.id).padStart(2,'0')}</div>
-  `;
-
-  card.addEventListener('click', () => tapCard(p.id));
-  return card;
+let act, timeH=’’, segsH=’’;
+if      (p.status===‘ready’)  act=‘TAP TO START’;
+else if (p.status===‘active’){
+act=‘RECORDING · TAP TO STOP’;
+timeH=`<div class="pt-time" data-live="${p.id}">${fmtMs(ptDur(p))}</div>`;
+if (p.segs>1) segsH=`<div class="pt-segs">seg ${p.segs}</div>`;
+} else {
+act=‘DONE · TAP TO RE-START’;
+timeH=`<div class="pt-time">${fmtMs(ptDur(p))}</div>`;
+if (p.segs>1) segsH=`<div class="pt-segs">${p.segs} segs</div>`;
 }
 
-function tapCard(id) {
-  const p = S.session.patients.find(x => x.id === id);
-  if (!p) return;
+const del=document.createElement(‘button’);
+del.className=‘pt-del’; del.innerHTML=‘×’;
+del.addEventListener(‘click’, e=>{ e.stopPropagation(); delPatient(p.id); });
 
-  if (p.status === 'ready') {
-    p.status = 'active'; p.startTime = Date.now();
-  } else if (p.status === 'active') {
-    p.status = 'done'; p.endTime = Date.now();
-  } else {
-    // undo done → back to active
-    p.status = 'active'; p.endTime = null;
-  }
-
-  saveCurrentSession();
-
-  // Re-render just this card (avoid full grid re-render for performance)
-  const old = document.querySelector(`.pt-card[data-id="${id}"]`);
-  if (old) old.replaceWith(makeCard(p));
-  updateHeader();
-
-  // Check completion
-  if (S.session.patients.every(x => x.status === 'done')) finaliseSession();
+card.innerHTML=`<div class="pt-icon">${ico}</div> <div class="pt-body"> <div class="pt-action">${act}</div> ${timeH}${segsH} </div> <div class="pt-num">PT ${String(p.id).padStart(2,'0')}</div>`;
+card.appendChild(del);
+card.addEventListener(‘click’, ()=>{ if(!S.delMode) tapCard(p.id); });
+armLongPress(card, p.id);
+return card;
 }
 
-function updateHeader() {
-  if (!S.session) return;
-  const done = S.session.patients.filter(p => p.status === 'done');
-  const n = S.session.patientCount;
-  document.getElementById('hdr-done').textContent  = done.length;
-  document.getElementById('hdr-total').textContent = n;
-
-  // Progress bar
-  document.getElementById('progress-fill').style.width = `${(done.length / n * 100).toFixed(1)}%`;
-
-  if (done.length > 0) {
-    const durs = done.map(p => p.endTime - p.startTime);
-    const avg  = durs.reduce((a,b) => a+b, 0) / durs.length;
-    document.getElementById('hdr-avg').textContent   = fmtMs(avg);
-    document.getElementById('foot-fast').textContent = fmtMs(Math.min(...durs));
-    document.getElementById('foot-slow').textContent = fmtMs(Math.max(...durs));
-    document.getElementById('foot-est').textContent  = estimateDone() || '—';
-  } else {
-    document.getElementById('hdr-avg').textContent   = '—';
-    document.getElementById('foot-fast').textContent = '—';
-    document.getElementById('foot-slow').textContent = '—';
-    document.getElementById('foot-est').textContent  = '—';
-  }
+function updateHdr() {
+if (!S.session) return;
+const done=S.session.pts.filter(p=>p.status===‘done’);
+const n=S.session.pts.length;
+document.getElementById(‘hdr-done’).textContent =done.length;
+document.getElementById(‘hdr-total’).textContent=n;
+document.getElementById(‘progress-fill’).style.width=n?`${(done.length/n*100).toFixed(1)}%`:‘0%’;
+if (done.length) {
+const durs=done.map(p=>ptDur(p));
+const avg=durs.reduce((a,b)=>a+b,0)/durs.length;
+document.getElementById(‘hdr-avg’).textContent    =fmtMs(avg);
+document.getElementById(‘foot-fast’).textContent  =fmtMs(Math.min(…durs));
+document.getElementById(‘foot-slow’).textContent  =fmtMs(Math.max(…durs));
+document.getElementById(‘foot-est’).textContent   =estDone()||’—’;
+} else {
+[‘hdr-avg’,‘foot-fast’,‘foot-slow’,‘foot-est’].forEach(id=>document.getElementById(id).textContent=’—’);
+}
 }
 
-function finaliseSession() {
-  const done = S.session.patients.filter(p => p.status === 'done');
-  const entry = {
-    date:        S.session.date,
-    patientCount: S.session.patientCount,
-    patients:    S.session.patients.map(p => ({...p})),
-    completedAt: Date.now(),
-    onTime:      msUntil0800() >= 0,
-  };
-  store.history = [entry, ...store.history.filter(h => h.date !== S.session.date)].slice(0, 60);
-  saveStore(store);
-  clearCurrentSession();
+function finalise() {
+const entry={
+date:S.session.date, count:S.session.pts.length,
+pts:S.session.pts.map(p=>({…p})),
+at:Date.now(), onTime:msUntil08()>=0,
+// legacy compat
+patients:S.session.pts.map(p=>({…p})),
+patientCount:S.session.pts.length,
+};
+store.history=[entry,…store.history.filter(h=>h.date!==S.session.date)].slice(0,90);
+save(SK,store); clearSess();
 }
 
-// ── Ticker ────────────────────────────────────
-let ticker = null;
+document.getElementById(‘sess-stats-btn’).addEventListener(‘click’, ()=>{ S.statsFrom=‘session’; showStats(); });
 
-function startTicker() {
-  stopTicker();
-  ticker = setInterval(tick, 1000);
-  tick();
-}
-function stopTicker() { if (ticker) clearInterval(ticker); ticker = null; }
+// ── Ticker ─────────────────────────────────────
+let ticker=null;
+const startTick=()=>{ stopTick(); ticker=setInterval(tick,1000); tick(); };
+const stopTick =()=>{ if(ticker)clearInterval(ticker); ticker=null; };
 
 function tick() {
-  if (S.screen !== 'session') return;
-
-  // Deadline countdown
-  const ms  = msUntil0800();
-  const el  = document.getElementById('hdr-deadline');
-  if (el) {
-    el.textContent = fmtCountdown(ms);
-    el.className = 'hdr-val';
-    if (ms < 0)            el.classList.add('late');
-    else if (ms < 600000)  el.classList.add('danger');  // < 10 min
-    else if (ms < 1800000) el.classList.add('warn');    // < 30 min
-  }
-
-  // Live timers
-  document.querySelectorAll('[data-live]').forEach(el => {
-    const p = S.session && S.session.patients.find(x => x.id === +el.dataset.live);
-    if (p && p.status === 'active') el.textContent = fmtMs(Date.now() - p.startTime);
-  });
+if (S.screen!==‘session’) return;
+const ms=msUntil08();
+const el=document.getElementById(‘hdr-deadline’);
+if (el) {
+el.textContent=fmtCountdown(ms); el.className=‘hdr-val’;
+if      (ms<0)       el.classList.add(‘late’);
+else if (ms<600000)  el.classList.add(‘danger’);
+else if (ms<1800000) el.classList.add(‘warn’);
+}
+if (S.session) {
+const now=Date.now();
+document.querySelectorAll(’[data-live]’).forEach(el=>{
+const p=S.session.pts.find(x=>x.id===+el.dataset.live);
+if (p&&p.status===‘active’) el.textContent=fmtMs(ptDur(p,now));
+});
+}
 }
 
-// Session "more" menu → stats
-document.getElementById('sess-menu-btn').addEventListener('click', () => showStats());
-
-// ── Stats Screen ──────────────────────────────
-function showStats() {
-  buildStats();
-  showScreen('stats');
-}
+// ── Stats ──────────────────────────────────────
+function showStats(){ buildStats(); showScreen(‘stats’); }
 
 function buildStats() {
-  const body = document.getElementById('stats-body');
-  body.innerHTML = '';
+const body=document.getElementById(‘stats-body’);
+body.innerHTML=’’;
 
-  // ── Today
-  const todayEntry = (store.history.find(h => h.date === today()))
-    || (S.session ? { ...S.session, onTime: msUntil0800() >= 0 } : null);
+// helper: get pts array from history entry (supports both formats)
+const pts=h=>(h.pts||h.patients||[]);
 
-  if (todayEntry) {
-    body.appendChild(secLabel('Today'));
-    const done = todayEntry.patients.filter(p => p.status === 'done');
-    const durs = done.map(p => p.endTime - p.startTime);
-    const avg  = durs.length ? durs.reduce((a,b)=>a+b,0) / durs.length : 0;
-    const fast = durs.length ? Math.min(...durs) : 0;
-    const slow = durs.length ? Math.max(...durs) : 0;
-    const tot  = durs.reduce((a,b)=>a+b,0);
-    const pct  = done.length / todayEntry.patientCount * 100;
+// Today
+const todayH=store.history.find(h=>h.date===today())
+||(S.session?{…S.session, pts:S.session.pts, onTime:msUntil08()>=0}:null);
 
-    body.appendChild(statCard(`
-      <div class="stat-grid">
-        <div class="stat-cell"><div class="cell-lbl">Completed</div>
-          <div class="cell-val accent">${done.length}<span style="font-size:14px;color:var(--dim)">/${todayEntry.patientCount}</span></div></div>
-        <div class="stat-cell"><div class="cell-lbl">Avg / Note</div>
-          <div class="cell-val">${durs.length ? fmtMs(avg) : '—'}</div></div>
-        <div class="stat-cell"><div class="cell-lbl">Fastest</div>
-          <div class="cell-val sm">${durs.length ? fmtMs(fast) : '—'}</div></div>
-        <div class="stat-cell"><div class="cell-lbl">Slowest</div>
-          <div class="cell-val sm">${durs.length ? fmtMs(slow) : '—'}</div></div>
-        <div class="stat-cell span2"><div class="cell-lbl">Total Note Time</div>
-          <div class="cell-val sm">${durs.length ? fmtMs(tot) : '—'}</div></div>
-      </div>
-      <div class="pbar-wrap"><div class="pbar-fill" style="width:${pct.toFixed(1)}%"></div></div>
-    `));
-  }
-
-  // ── All-time
-  if (store.history.length > 0) {
-    body.appendChild(secLabel('All Time'));
-
-    const allDone = store.history.flatMap(h => h.patients.filter(p => p.status === 'done'));
-    const allDurs = allDone.map(p => p.endTime - p.startTime);
-    const allAvg  = allDurs.length ? allDurs.reduce((a,b)=>a+b,0)/allDurs.length : 0;
-    const bestNote= allDurs.length ? Math.min(...allDurs) : 0;
-    const totPts  = allDone.length;
-    const onTime  = store.history.filter(h => h.onTime).length;
-    const avgPts  = (store.history.reduce((s,h)=>s+h.patients.filter(p=>p.status==='done').length,0)/store.history.length).toFixed(1);
-
-    body.appendChild(statCard(`
-      <div class="stat-grid">
-        <div class="stat-cell"><div class="cell-lbl">Sessions</div>
-          <div class="cell-val accent">${store.history.length}</div></div>
-        <div class="stat-cell"><div class="cell-lbl">Total Patients</div>
-          <div class="cell-val">${totPts}</div></div>
-        <div class="stat-cell"><div class="cell-lbl">Avg / Note</div>
-          <div class="cell-val sm">${allDurs.length ? fmtMs(allAvg) : '—'}</div></div>
-        <div class="stat-cell"><div class="cell-lbl">Best Note</div>
-          <div class="cell-val sm">${bestNote ? fmtMs(bestNote) : '—'}</div>
-          <div class="cell-sub">personal record</div></div>
-        <div class="stat-cell"><div class="cell-lbl">Avg Patients/Day</div>
-          <div class="cell-val sm">${avgPts}</div></div>
-        <div class="stat-cell"><div class="cell-lbl">Signed by 08:00</div>
-          <div class="cell-val accent">${onTime}<span style="font-size:14px;color:var(--dim)">/${store.history.length}</span></div></div>
-      </div>
-    `));
-
-    // ── History
-    body.appendChild(secLabel('History'));
-    const hl = document.createElement('div');
-    hl.className = 'stat-card';
-    const ll = document.createElement('div');
-    ll.className = 'hist-list';
-
-    store.history.slice(0, 20).forEach(h => {
-      const done = h.patients.filter(p => p.status === 'done');
-      const durs = done.map(p => p.endTime - p.startTime);
-      const avg  = durs.length ? fmtMs(durs.reduce((a,b)=>a+b,0)/durs.length) : '—';
-      const d    = new Date(h.date + 'T12:00:00');
-      const ds   = d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' });
-      const row  = document.createElement('div');
-      row.className = 'hist-row';
-      row.innerHTML = `
-        <div class="hist-date">${ds}</div>
-        <div class="hist-pts">${done.length}<span> pt</span></div>
-        <div class="hist-avg">avg ${avg}</div>
-        ${h.onTime !== undefined ? `<div class="hist-badge ${h.onTime ? '' : 'late'}">${h.onTime ? 'ON TIME' : 'LATE'}</div>` : ''}
-      `;
-      ll.appendChild(row);
-    });
-
-    hl.appendChild(ll);
-    body.appendChild(hl);
-  } else if (!todayEntry) {
-    const em = document.createElement('div');
-    em.className = 'empty-msg';
-    em.textContent = 'No sessions yet.\nStart your first round.';
-    body.appendChild(em);
-  }
-
-  // Clear data
-  const clear = document.createElement('div');
-  clear.className = 'danger-zone';
-  clear.textContent = '⚠ Clear All Data';
-  clear.addEventListener('click', () => {
-    if (confirm('Delete all history and sessions?')) {
-      localStorage.clear();
-      store = { history: [], lastCount: null };
-      S.session = null;
-      buildStats();
-    }
-  });
-  body.appendChild(clear);
+if (todayH) {
+body.appendChild(seclbl(‘Today’));
+const dn=pts(todayH).filter(p=>p.status===‘done’);
+const drs=dn.map(p=>ptDur(p));
+const avg=drs.length?drs.reduce((a,b)=>a+b,0)/drs.length:0;
+const tot=drs.reduce((a,b)=>a+b,0);
+const pct=pts(todayH).length?dn.length/pts(todayH).length*100:0;
+body.appendChild(scard(`<div class="stat-grid"> <div class="stat-cell"><div class="cell-lbl">Completed</div> <div class="cell-val accent">${dn.length}<span style="font-size:clamp(11px,3vw,14px);color:var(--dim)">/${pts(todayH).length}</span></div></div> <div class="stat-cell"><div class="cell-lbl">Avg / Note</div> <div class="cell-val">${drs.length?fmtMs(avg):'—'}</div></div> <div class="stat-cell"><div class="cell-lbl">Fastest</div> <div class="cell-val sm">${drs.length?fmtMs(Math.min(...drs)):'—'}</div></div> <div class="stat-cell"><div class="cell-lbl">Slowest</div> <div class="cell-val sm">${drs.length?fmtMs(Math.max(...drs)):'—'}</div></div> <div class="stat-cell span2"><div class="cell-lbl">Total Note Time</div> <div class="cell-val sm">${drs.length?fmtMs(tot):'—'}</div></div> </div> <div class="pbar-wrap"><div class="pbar-fill" style="width:${pct.toFixed(1)}%"></div></div>`));
 }
 
-function secLabel(txt) {
-  const el = document.createElement('div');
-  el.className = 'sec-label'; el.textContent = txt;
-  return el;
-}
-function statCard(html) {
-  const el = document.createElement('div');
-  el.className = 'stat-card'; el.innerHTML = html;
-  return el;
+// All-time
+if (store.history.length) {
+body.appendChild(seclbl(‘All Time’));
+const allPts =store.history.flatMap(h=>pts(h).filter(p=>p.status===‘done’));
+const allDurs=allPts.map(p=>ptDur(p));
+const allAvg =allDurs.length?allDurs.reduce((a,b)=>a+b,0)/allDurs.length:0;
+const best   =allDurs.length?Math.min(…allDurs):0;
+const onTime =store.history.filter(h=>h.onTime).length;
+const avgPDay=(store.history.reduce((s,h)=>s+pts(h).filter(p=>p.status===‘done’).length,0)/store.history.length).toFixed(1);
+body.appendChild(scard(`<div class="stat-grid"> <div class="stat-cell"><div class="cell-lbl">Sessions</div> <div class="cell-val accent">${store.history.length}</div></div> <div class="stat-cell"><div class="cell-lbl">Total Patients</div> <div class="cell-val">${allPts.length}</div></div> <div class="stat-cell"><div class="cell-lbl">Avg / Note</div> <div class="cell-val sm">${allDurs.length?fmtMs(allAvg):'—'}</div></div> <div class="stat-cell"><div class="cell-lbl">Best Note</div> <div class="cell-val sm">${best?fmtMs(best):'—'}</div> <div class="cell-sub">personal record</div></div> <div class="stat-cell"><div class="cell-lbl">Avg Pts/Day</div> <div class="cell-val sm">${avgPDay}</div></div> <div class="stat-cell"><div class="cell-lbl">Signed by 08:00</div> <div class="cell-val accent">${onTime}<span style="font-size:clamp(11px,3vw,14px);color:var(--dim)">/${store.history.length}</span></div></div> </div>`));
+
+```
+body.appendChild(seclbl('History'));
+const hcard=document.createElement('div'); hcard.className='stat-card';
+const hlist=document.createElement('div'); hlist.className='hist-list';
+store.history.slice(0,30).forEach(h=>hlist.appendChild(makeHistRow(h,pts)));
+hcard.appendChild(hlist); body.appendChild(hcard);
+```
+
+} else if (!todayH) {
+const em=document.createElement(‘div’);
+em.className=‘empty-msg’; em.textContent=‘No sessions yet.\nStart your first round.’;
+body.appendChild(em);
 }
 
-// Back button: return to session if active, else setup
-document.getElementById('back-btn').addEventListener('click', () => {
-  if (S.session && S.session.patients.some(p => p.status !== 'done' || S.session.patients.every(p=>p.status==='done'))) {
-    // If session exists go back to it (or setup if done)
-    const allDone = S.session.patients.every(p => p.status === 'done');
-    showScreen(allDone ? 'setup' : 'session');
-  } else {
-    showScreen('setup');
-  }
+// Export / Import / Clear
+const dr=document.createElement(‘div’); dr.className=‘data-row’;
+dr.innerHTML=`<button class="data-btn" id="exp-btn">↓ Export</button> <label class="data-btn">↑ Import<input type="file" accept=".json" id="imp-inp"></label> <button class="data-btn danger" id="clr-btn">✕ Clear</button>`;
+body.appendChild(dr);
+document.getElementById(‘exp-btn’).addEventListener(‘click’, exportData);
+document.getElementById(‘imp-inp’).addEventListener(‘change’, importData);
+document.getElementById(‘clr-btn’).addEventListener(‘click’, ()=>{
+if (confirm(‘Delete ALL history? Cannot be undone.’)) {
+localStorage.clear(); store={history:[],lastCount:null}; S.session=null; buildStats();
+}
+});
+}
+
+function makeHistRow(h, pts) {
+const dn=pts(h).filter(p=>p.status===‘done’);
+const drs=dn.map(p=>ptDur(p));
+const avg=drs.length?fmtMs(drs.reduce((a,b)=>a+b,0)/drs.length):’—’;
+const d=new Date(h.date+‘T12:00:00’);
+const ds=d.toLocaleDateString(‘en-US’,{weekday:‘short’,month:‘short’,day:‘numeric’});
+const row=document.createElement(‘div’); row.className=‘hist-row’;
+row.innerHTML=` <div class="hist-date">${ds}</div> <div class="hist-pts">${dn.length}<span> pt</span></div> <div class="hist-avg">avg ${avg}</div> ${h.onTime!=null?`<div class="hist-badge ${h.onTime?'':'late'}">${h.onTime?‘ON TIME’:‘LATE’}</div>`:''} <button class="hist-del">×</button> `;
+row.querySelector(’.hist-del’).addEventListener(‘click’, ()=>{
+if (confirm(`Delete ${ds}?`)) {
+const idx=store.history.indexOf(h);
+if (idx>-1) store.history.splice(idx,1);
+save(SK,store); buildStats();
+}
+});
+return row;
+}
+
+const seclbl=t=>{ const el=document.createElement(‘div’); el.className=‘sec-label’; el.textContent=t; return el; };
+const scard =h=>{ const el=document.createElement(‘div’); el.className=‘stat-card’; el.innerHTML=h; return el; };
+
+// ── Export ─────────────────────────────────────
+function exportData() {
+const blob=new Blob([JSON.stringify({version:3,exportedAt:new Date().toISOString(),store},null,2)],{type:‘application/json’});
+const a=document.createElement(‘a’);
+a.href=URL.createObjectURL(blob); a.download=`roundtrack-${today()}.json`;
+document.body.appendChild(a); a.click(); document.body.removeChild(a);
+URL.revokeObjectURL(a.href);
+}
+
+// ── Import ─────────────────────────────────────
+function importData(e) {
+const file=e.target.files[0]; if (!file) return;
+const reader=new FileReader();
+reader.onload=ev=>{
+try {
+const parsed=JSON.parse(ev.target.result);
+const inc=parsed.store||parsed;
+if (!Array.isArray(inc.history)){alert(‘Invalid RoundTrack file.’);return;}
+if (!confirm(`Merge ${inc.history.length} session(s) into your data?\n(Existing sessions with same date will be replaced.)`)) return;
+const byDate=Object.fromEntries(store.history.map(h=>[h.date,h]));
+inc.history.forEach(h=>{ byDate[h.date]=h; });
+store.history=Object.values(byDate).sort((a,b)=>b.date.localeCompare(a.date));
+save(SK,store); buildStats();
+alert(`Done. ${store.history.length} total sessions.`);
+} catch { alert(‘Could not read file.’); }
+};
+reader.readAsText(file); e.target.value=’’;
+}
+
+// ── Back ───────────────────────────────────────
+document.getElementById(‘back-btn’).addEventListener(‘click’, ()=>{
+if (S.statsFrom===‘session’&&S.session) showScreen(‘session’);
+else showScreen(‘setup’);
 });
 
-// ── Screen Router ─────────────────────────────
+// ── Router ─────────────────────────────────────
 function showScreen(name) {
-  S.screen = name;
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(name).classList.add('active');
-
-  if (name === 'setup') { stopTicker(); initSetup(); }
-  else if (name === 'session') { renderGrid(); startTicker(); }
+S.screen=name;
+document.querySelectorAll(’.screen’).forEach(s=>s.classList.remove(‘active’));
+document.getElementById(name).classList.add(‘active’);
+if      (name===‘setup’)   { stopTick(); initSetup(); }
+else if (name===‘session’) { renderGrid(); startTick(); }
 }
 
-// ── PWA / Service Worker ──────────────────────
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js').catch(() => {});
-}
+// ── PWA ────────────────────────────────────────
+if (‘serviceWorker’ in navigator) navigator.serviceWorker.register(’./sw.js’).catch(()=>{});
 
-// ── Boot ──────────────────────────────────────
-function boot() {
-  // Restore last selected count
-  S.selectedCount = store.lastCount || null;
-
-  // Check for an in-progress session from today
-  const saved = loadSavedSession();
-  if (saved && saved.patients.some(p => p.status !== 'done')) {
-    S.session = saved;
-    showScreen('session');
-  } else {
-    showScreen('setup');
-  }
-}
-
-boot();
+// ── Boot ───────────────────────────────────────
+(function(){
+S.sel=store.lastCount||null;
+const saved=load(SSK);
+if (saved&&saved.date===today()&&(saved.pts||saved.patients||[]).some(p=>p.status!==‘done’)) {
+// normalise old format
+if (!saved.pts&&saved.patients) saved.pts=saved.patients;
+S.session=saved; showScreen(‘session’);
+} else showScreen(‘setup’);
+})();
 </script>
 
 </body>
