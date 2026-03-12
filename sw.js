@@ -1,4 +1,4 @@
-const CACHE = ‘roundtrack-v2’;
+const CACHE = ‘roundtrack-v3’;
 const ASSETS = [’./’, ‘./index.html’, ‘./manifest.json’, ‘./icon.svg’];
 
 self.addEventListener(‘install’, e => {
